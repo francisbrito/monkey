@@ -32,3 +32,15 @@ const (
 	LET      = "LET"
 	FUNCTION = "FUNCTION"
 )
+
+var keywords = map[string]Type{
+	"fn":  FUNCTION,
+	"let": LET,
+}
+
+func ResolveIdent(ident string) Type {
+	if t, ok := keywords[ident]; ok {
+		return t
+	}
+	return IDENT
+}
