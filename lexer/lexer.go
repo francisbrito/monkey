@@ -49,12 +49,20 @@ func (l *Lexer) readIdentifier() string {
 	return l.input[initPos:l.position]
 }
 
-func (l *Lexer) readInt() string {
+func (l *Lexer) readNumber() (string, token.Type) {
+	var tokenType token.Type = token.INT
 	initPos := l.position
-	for isNumber(l.ch) {
+	for isNumber(l.ch) || l.ch == '.' {
+		if l.ch == '.' {
+			if tokenType == token.INT {
+				tokenType = token.FLOAT
+			} else {
+				tokenType = token.ILLEGAL
+			}
+		}
 		l.readChar()
 	}
-	return l.input[initPos:l.position]
+	return l.input[initPos:l.position], tokenType
 }
 
 func (l *Lexer) skipWhitespace() {
@@ -119,8 +127,9 @@ func (l *Lexer) NextToken() token.Token {
 			tok.Type = token.ResolveIdent(tok.Literal)
 			return tok
 		} else if isNumber(l.ch) {
-			tok.Literal = l.readInt()
-			tok.Type = token.INT
+			lit, tokenType := l.readNumber()
+			tok.Literal = lit
+			tok.Type = tokenType
 			return tok
 		} else {
 			tok = newToken(token.ILLEGAL, l.ch)

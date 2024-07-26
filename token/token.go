@@ -11,7 +11,9 @@ const (
 	EOF     = "EOF"
 	ILLEGAL = "ILLEGAL"
 
-	INT = "INT"
+	INT   = "INT"
+	FLOAT = "FLOAT"
+	IDENT = "IDENT"
 
 	// Operators
 	ASSIGN         = "="
@@ -56,5 +58,5 @@ func ResolveIdent(ident string) Type {
 	if t, ok := keywords[ident]; ok {
 		return t
 	}
-	return "IDENT"
+	return IDENT
 }
