@@ -21,7 +21,9 @@ func Start(in io.Reader, out io.Writer) {
 		line := scanner.Text()
 		l := lexer.New(line)
 		for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
-			fmt.Printf("%+v\n", tok)
+			if _, err := fmt.Fprintf(out, "%+v\n", tok); err != nil {
+				panic(fmt.Errorf("[repl] unable to write to out stream"))
+			}
 		}
 	}
 }
