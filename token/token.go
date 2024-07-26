@@ -11,16 +11,20 @@ const (
 	EOF     = "EOF"
 	ILLEGAL = "ILLEGAL"
 
-	// Identifiers and literals
-	IDENT = "IDENT"
-	INT   = "INT"
+	INT = "INT"
 
 	// Operators
-	ASSIGN = "="
-	PLUS   = "+"
+	ASSIGN         = "="
+	PLUS           = "+"
+	MINUS          = "-"
+	MULTIPLICATION = "*"
+	DIVIDE         = "/"
+	EQUALS         = "=="
+	NOT_EQUALS     = "!="
+	NOT            = "!"
+	GT             = ">"
+	LT             = "<"
 
-	// Delimiters
-	COMMA     = ","
 	SEMICOLON = ";"
 
 	LPAREN = "LPAREN"
@@ -31,16 +35,26 @@ const (
 	// Keywords
 	LET      = "LET"
 	FUNCTION = "FUNCTION"
+	TRUE     = "TRUE"
+	FALSE    = "FALSE"
+	IF       = "IF"
+	ELSE     = "ELSE"
+	RETURN   = "RETURN"
 )
 
 var keywords = map[string]Type{
-	"fn":  FUNCTION,
-	"let": LET,
+	"fn":     FUNCTION,
+	"let":    LET,
+	"true":   TRUE,
+	"false":  FALSE,
+	"if":     IF,
+	"else":   ELSE,
+	"return": RETURN,
 }
 
 func ResolveIdent(ident string) Type {
 	if t, ok := keywords[ident]; ok {
 		return t
 	}
-	return IDENT
+	return "IDENT"
 }
