@@ -15,6 +15,14 @@ func New(input string) *Lexer {
 	return l
 }
 
+func (l *Lexer) peekChar() byte {
+	if l.readPosition >= len(l.input) {
+		return 0
+	} else {
+		return l.input[l.readPosition]
+	}
+}
+
 func (l *Lexer) readChar() {
 	if l.readPosition >= len(l.input) {
 		l.ch = 0
@@ -66,8 +74,7 @@ func (l *Lexer) NextToken() token.Token {
 
 	switch l.ch {
 	case '=':
-		nextChar := l.input[l.readPosition]
-		if nextChar == '=' {
+		if l.peekChar() == '=' {
 			l.readChar()
 			tok = token.Token{Type: token.EQUALS, Literal: "=="}
 		} else {
@@ -88,8 +95,7 @@ func (l *Lexer) NextToken() token.Token {
 	case ';':
 		tok = newToken(token.SEMICOLON, l.ch)
 	case '!':
-		nextChar := l.input[l.readPosition]
-		if nextChar == '=' {
+		if l.peekChar() == '=' {
 			l.readChar()
 			tok = token.Token{Type: token.NOT_EQUALS, Literal: "!="}
 		} else {
