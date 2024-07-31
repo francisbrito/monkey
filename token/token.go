@@ -28,6 +28,7 @@ const (
 	LT             = "<"
 
 	SEMICOLON = ";"
+	COMMA     = ","
 
 	LPAREN = "LPAREN"
 	RPAREN = "RPAREN"

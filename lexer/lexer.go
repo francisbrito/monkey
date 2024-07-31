@@ -99,7 +99,7 @@ func (l *Lexer) NextToken() token.Token {
 	case '}':
 		tok = newToken(token.RBRACE, l.ch)
 	case ',':
-		tok = newToken(",", l.ch)
+		tok = newToken(token.COMMA, l.ch)
 	case ';':
 		tok = newToken(token.SEMICOLON, l.ch)
 	case '!':
