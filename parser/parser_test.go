@@ -3,6 +3,7 @@ package parser
 import (
 	"monkey/ast"
 	"monkey/lexer"
+	"monkey/token"
 	"testing"
 )
 
@@ -59,6 +60,25 @@ func TestReturnStatement(t *testing.T) {
 		if tl := rs.Token.Literal; tl != "return" {
 			t.Errorf(`rs.Token.Literal = %q, want "return"`, tl)
 		}
+	}
+}
+
+func TestString(t *testing.T) {
+	prg := &ast.Program{Statements: []ast.Statement{
+		&ast.LetStatement{
+			Token: token.Token{Literal: "let", Type: token.LET},
+			Name: &ast.Identifier{
+				Token: token.Token{Literal: "myVar", Type: token.IDENT},
+				Value: "myVar",
+			},
+			Value: &ast.Identifier{
+				Token: token.Token{Literal: "anotherVar", Type: token.IDENT},
+				Value: "anotherVar",
+			},
+		},
+	}}
+	if src := prg.String(); src != "let myVar = anotherVar;" {
+		t.Errorf(`prg.String() = %q, want "let myVar = anotherVar;"`, src)
 	}
 }
 
