@@ -40,7 +40,7 @@ func (ls *LetStatement) statementNode() {}
 
 type Identifier struct {
 	Token token.Token
-	Name  string
+	Value string
 }
 
 func (i *Identifier) TokenLiteral() string {
