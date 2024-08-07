@@ -115,3 +115,16 @@ func (le *LiteralExpression) TokenLiteral() string {
 	return le.Token.Literal
 }
 func (le *LiteralExpression) expressionNode() {}
+
+type IntegerLiteral struct {
+	Token token.Token
+	Value int64
+}
+
+func (il *IntegerLiteral) String() string {
+	return il.Token.Literal
+}
+func (il *IntegerLiteral) TokenLiteral() string {
+	return il.Token.Literal
+}
+func (il *IntegerLiteral) expressionNode() {}
