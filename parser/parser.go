@@ -7,16 +7,31 @@ import (
 	"monkey/token"
 )
 
+const (
+	LOWEST      = iota + 1
+	EQUALS      // ==
+	LESSGREATER // > or <
+	SUM         // +
+	PRODUCT     // *
+	PREFIX      // -X or !X
+	CALL        // myFunction(X)”
+)
+
 type Parser struct {
 	l      *lexer.Lexer
 	errors []string
 
 	curToken  token.Token
 	peekToken token.Token
+
+	prefixParseFns map[token.Type]prefixParseFn
+	infixParseFn   map[token.Type]infixParseFn
 }
 
 func New(l *lexer.Lexer) *Parser {
 	p := &Parser{errors: []string{}, l: l}
+	p.prefixParseFns = map[token.Type]prefixParseFn{}
+	p.registerPrefixParseFn(token.IDENT, p.parseIdentifier)
 	p.nextToken()
 	p.nextToken()
 	return p
@@ -48,8 +63,9 @@ func (p *Parser) parseStatement() ast.Statement {
 		return p.parseLetStatement()
 	case token.RETURN:
 		return p.parseReturnStatement()
+	default:
+		return p.parseExpressionStatement()
 	}
-	return nil
 }
 
 func (p *Parser) parseLetStatement() *ast.LetStatement {
@@ -85,15 +101,17 @@ func (p *Parser) peekTokenIs(t token.Type) bool {
 	return p.peekToken.Type == t
 }
 
-func (p *Parser) parseIdentifier() *ast.Identifier {
-	if p.curToken.Type != token.IDENT {
-		p.errors = append(p.errors, "not an identifier")
-	}
+func (p *Parser) parseIdentifier() ast.Expression {
 	return &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 }
 
-func (p *Parser) parseExpression() ast.Expression {
-	return nil
+func (p *Parser) parseExpression(precedence int) ast.Expression {
+	prefix, ok := p.prefixParseFns[p.curToken.Type]
+	if !ok {
+		return nil
+	}
+	le := prefix()
+	return le
 }
 
 func (p *Parser) peekError(t token.Type) {
@@ -107,4 +125,26 @@ func (p *Parser) parseReturnStatement() ast.Statement {
 		p.nextToken()
 	}
 	return rs
+}
+
+type (
+	prefixParseFn func() ast.Expression
+	infixParseFn  func(ast.Expression) ast.Expression
+)
+
+func (p *Parser) registerPrefixParseFn(t token.Type, f prefixParseFn) {
+	p.prefixParseFns[t] = f
+}
+
+func (p *Parser) registerInfixParseFn(t token.Type, f infixParseFn) {
+	p.infixParseFn[t] = f
+}
+
+func (p *Parser) parseExpressionStatement() ast.Statement {
+	es := &ast.ExpressionStatement{Token: p.curToken}
+	es.Expression = p.parseExpression(LOWEST)
+	if p.peekTokenIs(token.SEMICOLON) {
+		p.nextToken()
+	}
+	return es
 }
